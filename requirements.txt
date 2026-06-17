@@ -1,2 +1,4 @@
 pyttsx3
 pandas
+openai
+python-dotenv

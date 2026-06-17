@@ -46,19 +46,17 @@ def _check_mem():
 
 
 def _check_ai():
-    """Verifica si la API de Gemini responde."""
+    """Verifica si la API de OpenCode responde."""
     try:
-        from google import genai
-        from cerebro import API_KEYS
-        client = genai.Client(api_key=API_KEYS[0])
+        from cerebro import client
         # Petición mínima para verificar conectividad
         client.models.list()
-        return "OK", "GEMINI API CONECTADA"
+        return "OK", "OPENCODE API CONECTADA"
     except Exception as e:
         err = str(e)
         if "429" in err:
             return "WARN", "API ACTIVA — CUOTA LIMITADA"
-        return "FAIL", "API NO DISPONIBLE"
+        return "FAIL", f"API NO DISPONIBLE: {e}"
 
 
 class SplashScreen:
@@ -67,7 +65,7 @@ class SplashScreen:
         ("SYS  — VERIFICANDO HARDWARE",   _check_sys, 0.0),
         ("MEM  — ANALIZANDO MEMORIA RAM", _check_mem, 0.0),
         ("NET  — PROBANDO CONECTIVIDAD",  _check_net, 0.0),
-        ("AI   — CONTACTANDO GEMINI API", _check_ai,  0.0),
+        ("AI   — CONTACTANDO OPENCODE API", _check_ai,  0.0),
         ("CARGANDO MÓDULOS DE VOZ",       None,       0.6),
         ("INICIALIZANDO HERRAMIENTAS",    None,       0.5),
         ("CALIBRANDO REACTOR ARC",        None,       0.7),
