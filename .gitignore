@@ -1,0 +1,39 @@
+# Secrets / Variables de entorno (NUNCA subir)
+.env
+.env.*
+
+# Python
+
+__pycache__/
+*.py[cod]
+*.pyd
+venv/
+.venv/
+*.egg-info/
+
+# Archivos temporales
+*.mp3
+temp_*.mp3
+test_*.mp3
+PyWhatKit_DB.txt
+
+# Datos de usuario / inventario
+inventario.csv
+Nuevo inventario 2026.xlsx
+
+# Memoria persistente (datos locales)
+memoria/
+
+# Sandbox (archivos temporales de Javier)
+sandbox/
+
+# Plugins generados en tiempo de ejecución
+plugins/__pycache__/
+
+# Archivos de test rápido
+scratch.py
+test.py
+test2.py
+test_edge.mp3
+test_tools.py
+listar_voces.py
