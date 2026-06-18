@@ -4,7 +4,6 @@ import threading
 import math
 import random
 import socket
-import time as _time
 from datetime import datetime
 import psutil
 import motor_voz
@@ -294,7 +293,7 @@ class JavierGUI:
         self.ticker_canvas.itemconfig(self.ticker_text_id, text=ticker_str * 2)
         # Reiniciar cuando salga completamente del canvas
         text_bbox = self.ticker_canvas.bbox(self.ticker_text_id)
-        if text_bbox and text_bbox[2] < 0:
+        if text_bbox is not None and len(text_bbox) > 2 and text_bbox[2] < 0:
             self.ticker_x = self.screen_w
 
         self.anim_tick += 1

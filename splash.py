@@ -49,8 +49,12 @@ def _check_ai():
     """Verifica si la API de OpenCode responde."""
     try:
         from cerebro import client
-        # Petición mínima para verificar conectividad
-        client.models.list()
+        # Petición mínima para verificar conectividad (chat liviano)
+        client.chat.completions.create(
+            model="big-pickle",
+            messages=[{"role": "user", "content": "ping"}],
+            max_tokens=1
+        )
         return "OK", "OPENCODE API CONECTADA"
     except Exception as e:
         err = str(e)

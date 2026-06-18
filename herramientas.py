@@ -3,7 +3,10 @@ import pywhatkit
 import time
 import requests
 from ddgs import DDGS
+from dotenv import load_dotenv
 from base_datos import listar_inventario_completo as _listar_inventario_completo, buscar_inventario_por_categoria as _buscar_por_cat, actualizar_inventario as _actualizar_inventario, buscar_articulo as _buscar_articulo
+
+load_dotenv()
 
 SANDBOX_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "sandbox"))
 
@@ -55,8 +58,15 @@ def explorar_directorio(ruta_absoluta: str) -> str:
     try:
         if not os.path.exists(ruta_absoluta):
             return f"Error: La ruta '{ruta_absoluta}' no existe."
-        archivos = os.listdir(ruta_absoluta)
-        return f"Contenido de {ruta_absoluta}:\n" + "\n".join(archivos)
+        entradas = []
+        for item in os.listdir(ruta_absoluta):
+            ruta_item = os.path.join(ruta_absoluta, item)
+            if os.path.isdir(ruta_item):
+                entradas.append(f"[DIR]  {item}\\")
+            else:
+                tamaño = os.path.getsize(ruta_item)
+                entradas.append(f"[FILE] {item}  ({tamaño} bytes)")
+        return f"Contenido de {ruta_absoluta}:\n" + "\n".join(entradas)
     except Exception as e:
         return f"Error al explorar directorio: {e}"
 
@@ -111,15 +121,14 @@ def enviar_whatsapp(numero: str, mensaje: str) -> str:
     except Exception as e:
         return f"Error al intentar enviar el WhatsApp: {e}"
 
-import wikipedia
-
 def buscar_wikipedia(consulta: str) -> str:
     """Busca un resumen en Wikipedia en español. Útil para información general.
     Args:
         consulta: Lo que se desea buscar (ej. 'FIRST Robotics Competition').
     """
     try:
-        import wikipedia
+        import wikipedia as wikipedia_mod
+        wikipedia = wikipedia_mod
         wikipedia.set_lang("es")
         resumen = wikipedia.summary(consulta, sentences=2)
         return resumen
@@ -183,7 +192,7 @@ def actualizar_inventario(nombre_articulo: str, cantidad: str) -> str:
         return f"Error actualizando inventario: {e}"
 
 # ─── THE BLUE ALLIANCE API ────────────────────────────────────────────
-TBA_API_KEY = "TSjClENCvNITHaM7E4yB8GMsmR0lhnzs0umAIdaOabls503sTqSFhlgFBouCVTDN"
+TBA_API_KEY = os.getenv("TBA_API_KEY", "")
 TBA_BASE_URL = "https://www.thebluealliance.com/api/v3"
 
 def tba_info_equipo(numero_equipo: str) -> str:

@@ -7,6 +7,9 @@ import uuid
 import glob
 import pyaudio
 import subprocess
+from dotenv import load_dotenv
+
+load_dotenv()
 
 try:
     from faster_whisper import WhisperModel
@@ -19,7 +22,10 @@ except Exception as e:
     print(f"[SISTEMA] No se pudo cargar Whisper, se usará Google básico de respaldo. Error: {e}")
     USAR_WHISPER = False
 
-API_KEY = "sk_d6dd973d10518be093d0847f520b9249a3bbf88c51655f13"
+API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+
+if not API_KEY:
+    print("[SISTEMA] ADVERTENCIA: No hay ELEVENLABS_API_KEY en .env. Se usará respaldo Edge TTS.")
 
 on_estado_cambio = None
 

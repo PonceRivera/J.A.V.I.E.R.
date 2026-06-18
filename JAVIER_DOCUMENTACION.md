@@ -15,7 +15,7 @@ Un asistente de voz estilo JARVIS (Iron Man) diseñado para el taller de robóti
 - **Escuchar por micrófono** y transcribir lo que el usuario dice (español de México).
 - **Responder con voz hiperrealista** usando ElevenLabs (voz "Callum", ronca y calmada).
 - **Buscar herramientas y piezas** en el inventario del taller (archivo Excel).
-- **Responder preguntas generales** sobre robótica, FRC, programación, etc. usando Google Gemini.
+- **Responder preguntas generales** sobre robótica, FRC, programación, etc. usando OpenCode AI (modelo big-pickle).
 - **Mostrar una interfaz gráfica** estilo terminal/hacker con indicadores de estado de color.
 
 ---
@@ -116,13 +116,14 @@ Usuario habla por micrófono
 
 ---
 
-### `cerebro.py` — Inteligencia Artificial (Gemini)
+### `cerebro.py` — Inteligencia Artificial (OpenCode AI)
 
-- SDK: `google-genai` (paquete nuevo, NO el obsoleto `google-generativeai`)
-- API Key: `AQ.Ab8RN6JSyl9Z6cLacYDxYFgHoany5pSV7G2ET33qc_brB1MDNw`
-- Modelo: `gemini-2.5-flash` (gratuito y rápido)
-- **System Instruction (personalidad):** "Eres JAVIER, el asistente de IA del equipo Jaegers de robotica FRC. Tus respuestas deben ser EXTREMADAMENTE CORTAS, de una o dos oraciones maximo. Ve directo al grano, sin rodeos. Eres rapido, eficiente y calmado. IMPORTANTE: No tienes acceso directo al inventario. Si te preguntan por cantidades de piezas, herramientas o componentes del taller, di que no tienes esa informacion en este momento. Solo responde preguntas generales de conocimiento, robotica, FRC, etc."
-- **Regla importante:** Gemini NO debe inventar datos del inventario. Solo responde preguntas generales.
+- SDK: `openai` (cliente compatible con endpoint de OpenCode)
+- Endpoint: `https://opencode.ai/zen/v1`
+- API Key: Cargada desde `.env` como `OPENCODE_API_KEY`
+- Modelo por defecto: `big-pickle` / Modelo Pro: `big-pickle`
+- **System Instruction (personalidad):** Ver `cerebro.py` línea 129 — instrucción detallada de personalidad tipo JARVIS para FRC.
+- **Tool use:** JAVIER puede ejecutar herramientas locales (inventario, TBA, WhatsApp, plugins, etc.) mediante function calling de OpenAI API.
 
 ---
 
@@ -201,7 +202,7 @@ cd C:\Users\Crist\.gemini\antigravity-ide\scratch\javier_bot
 1. **Python 3.12 obligatorio.** PyAudio no tiene wheel para Python 3.14. El entorno virtual fue creado específicamente con `py -3.12`.
 2. **ElevenLabs por HTTP directo.** El SDK oficial de ElevenLabs (`elevenlabs` pip) no funcionó correctamente con Python 3.14/3.12. Se usa `requests.post()` directamente contra la API REST.
 3. **Audio nativo de Windows.** Se usa `ctypes.windll.winmm.mciSendStringW` para reproducir MP3. No se usa pygame (incompatible con 3.14) ni ningún reproductor externo.
-4. **Gemini con `google-genai`.** El paquete viejo `google-generativeai` está obsoleto. Se usa el nuevo `google-genai` con `genai.Client()`.
+4. **OpenCode AI como cerebro.** Se usa el cliente OpenAI-compatible apuntando a `https://opencode.ai/zen/v1` con el modelo `big-pickle`. Soporta function calling para herramientas locales.
 5. **Evitar emojis en prints.** La consola de Windows (cp1252) no soporta emojis Unicode. Se usan marcadores ASCII como `[MIC]` y `[OK]`.
 6. **Texto "J.A.V.I.E.R." → "Javier" antes de TTS.** Para que la voz no deletree cada letra.
 7. **Archivos temporales únicos.** Cada audio generado usa `temp_{uuid}.mp3` para evitar `Permission denied` cuando hay respuestas consecutivas.
@@ -240,7 +241,8 @@ cd C:\Users\Crist\.gemini\antigravity-ide\scratch\javier_bot
 
 | Servicio | Key | Plan |
 |----------|-----|------|
-| ElevenLabs (voz) | `sk_5fcab749...` | Gratuito (10,000 chars/mes) |
-| Google Gemini (IA) | `AQ.Ab8RN6J...` | Gratuito |
+| ElevenLabs (voz) | Cargada desde `.env` como `ELEVENLABS_API_KEY` | Gratuito (10,000 chars/mes) |
+| OpenCode AI (cerebro) | Cargada desde `.env` como `OPENCODE_API_KEY` | Gratuito / Pro |
+| The Blue Alliance (TBA) | Cargada desde `.env` como `TBA_API_KEY` | Gratuito |
 
 > **Nota de seguridad:** Las API keys están hardcodeadas en los archivos Python. Para producción se recomienda moverlas a variables de entorno.
